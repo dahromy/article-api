@@ -26,3 +26,8 @@ services:
 
     database:
         type: mongo
+
+tooling:
+    mongo:
+        service: database
+        cmd: mongo
