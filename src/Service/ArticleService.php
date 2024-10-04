@@ -5,17 +5,21 @@ namespace App\Service;
 use App\Document\Article;
 use App\Repository\ArticleRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ArticleService implements ArticleServiceInterface
+readonly class ArticleService implements ArticleServiceInterface
 {
     public function __construct(
-        private readonly DocumentManager $dm,
-        private readonly ArticleRepository $articleRepository,
-        private readonly ValidatorInterface $validator
+        private DocumentManager    $dm,
+        private ArticleRepository  $articleRepository,
+        private ValidatorInterface $validator
     ) {
     }
 
+    /**
+     * @throws MongoDBException
+     */
     public function getAllArticles(int $page, int $limit): array
     {
         $articles = $this->articleRepository->findAllOrderedByName($page, $limit);
