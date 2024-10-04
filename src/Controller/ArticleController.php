@@ -13,12 +13,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/articles')]
 class ArticleController extends AbstractController
 {
 
-    public function __construct(private readonly DocumentManager $dm, private readonly ArticleRepository $articleRepository)
+    public function __construct(
+        private readonly DocumentManager $dm,
+        private readonly ArticleRepository $articleRepository,
+        private readonly ValidatorInterface $validator
+    )
     {
     }
 
@@ -47,12 +52,21 @@ class ArticleController extends AbstractController
         $article->setPrice($data['price']);
         $article->setQuantity($data['quantity']);
 
+        $errors = $this->validator->validate($article);
+        if (count($errors) > 0) {
+            return $this->json(['errors' => (string) $errors], Response::HTTP_BAD_REQUEST);
+        }
+
         $this->dm->persist($article);
         $this->dm->flush();
 
         return $this->json($article, Response::HTTP_CREATED);
     }
 
+    /**
+     * @throws MappingException
+     * @throws LockException
+     */
     #[Route('/{id}', methods: ['GET'])]
     public function show(string $id): JsonResponse
     {
@@ -86,6 +100,11 @@ class ArticleController extends AbstractController
         $article->setDescription($data['description']);
         $article->setPrice($data['price']);
         $article->setQuantity($data['quantity']);
+
+        $errors = $this->validator->validate($article);
+        if (count($errors) > 0) {
+            return $this->json(['errors' => (string) $errors], Response::HTTP_BAD_REQUEST);
+        }
 
         $this->dm->flush();
 
