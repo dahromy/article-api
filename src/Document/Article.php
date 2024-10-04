@@ -2,9 +2,10 @@
 
 namespace App\Document;
 
+use App\Repository\ArticleRepository;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
-#[MongoDB\Document(collection: "articles")]
+#[MongoDB\Document(collection: "articles", repositoryClass: ArticleRepository::class)]
 class Article
 {
     #[MongoDB\Id]
