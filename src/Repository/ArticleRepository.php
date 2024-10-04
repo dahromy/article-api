@@ -5,12 +5,8 @@ namespace App\Repository;
 use App\Document\Article;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
-use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use MongoDB\BSON\Regex;
-use MongoDB\DeleteResult;
-use MongoDB\InsertOneResult;
-use MongoDB\UpdateResult;
 
 /**
  * @template-extends ServiceDocumentRepository<Article>

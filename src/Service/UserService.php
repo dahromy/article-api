@@ -7,11 +7,11 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService implements UserServiceInterface
+readonly class UserService implements UserServiceInterface
 {
     public function __construct(
-        private readonly DocumentManager $dm,
-        private readonly UserPasswordHasherInterface $passwordHasher
+        private DocumentManager             $dm,
+        private UserPasswordHasherInterface $passwordHasher
     ) {
     }
 
