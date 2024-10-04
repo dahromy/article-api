@@ -2,85 +2,50 @@
 
 namespace App\Controller;
 
-use App\Document\Article;
-use App\Repository\ArticleRepository;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\LockException;
-use Doctrine\ODM\MongoDB\Mapping\MappingException;
-use Doctrine\ODM\MongoDB\MongoDBException;
+use App\Service\ArticleServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/articles')]
 class ArticleController extends AbstractController
 {
-
     public function __construct(
-        private readonly DocumentManager $dm,
-        private readonly ArticleRepository $articleRepository,
-        private readonly ValidatorInterface $validator
-    )
-    {
+        private readonly ArticleServiceInterface $articleService
+    ) {
     }
 
-    /**
-     * @throws MongoDBException
-     */
     #[Route('', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 10);
 
-        $articles = $this->articleRepository->findAllOrderedByName($page, $limit);
-        $total = $this->articleRepository->countAll();
+        $result = $this->articleService->getAllArticles($page, $limit);
 
-        return $this->json([
-            'data' => $articles,
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit
-        ]);
+        return $this->json($result);
     }
 
-    /**
-     * @throws \Throwable
-     * @throws MongoDBException
-     */
     #[Route('', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        $article = new Article();
-        $article->setName($data['name']);
-        $article->setDescription($data['description']);
-        $article->setPrice($data['price']);
-        $article->setQuantity($data['quantity']);
+        $result = $this->articleService->createArticle($data);
 
-        $errors = $this->validator->validate($article);
-        if (count($errors) > 0) {
-            return $this->json(['errors' => (string) $errors], Response::HTTP_BAD_REQUEST);
+        if (isset($result['errors'])) {
+            return $this->json(['errors' => $result['errors']], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->dm->persist($article);
-        $this->dm->flush();
-
-        return $this->json($article, Response::HTTP_CREATED);
+        return $this->json($result['article'], Response::HTTP_CREATED);
     }
 
-    /**
-     * @throws MappingException
-     * @throws LockException
-     */
     #[Route('/{id}', methods: ['GET'])]
     public function show(string $id): JsonResponse
     {
-        $article = $this->articleRepository->find($id);
+        $article = $this->articleService->getArticle($id);
 
         if (!$article) {
             throw $this->createNotFoundException('Article not found');
@@ -89,16 +54,10 @@ class ArticleController extends AbstractController
         return $this->json($article);
     }
 
-    /**
-     * @throws MappingException
-     * @throws \Throwable
-     * @throws MongoDBException
-     * @throws LockException
-     */
     #[Route('/{id}', methods: ['PUT'])]
     public function update(string $id, Request $request): JsonResponse
     {
-        $article = $this->articleRepository->find($id);
+        $article = $this->articleService->getArticle($id);
 
         if (!$article) {
             throw $this->createNotFoundException('Article not found');
@@ -106,38 +65,25 @@ class ArticleController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        $article->setName($data['name']);
-        $article->setDescription($data['description']);
-        $article->setPrice($data['price']);
-        $article->setQuantity($data['quantity']);
+        $result = $this->articleService->updateArticle($article, $data);
 
-        $errors = $this->validator->validate($article);
-        if (count($errors) > 0) {
-            return $this->json(['errors' => (string) $errors], Response::HTTP_BAD_REQUEST);
+        if (isset($result['errors'])) {
+            return $this->json(['errors' => $result['errors']], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->dm->flush();
-
-        return $this->json($article);
+        return $this->json($result['article']);
     }
 
-    /**
-     * @throws MappingException
-     * @throws \Throwable
-     * @throws MongoDBException
-     * @throws LockException
-     */
     #[Route('/{id}', methods: ['DELETE'])]
     public function delete(string $id): JsonResponse
     {
-        $article = $this->articleRepository->find($id);
+        $article = $this->articleService->getArticle($id);
 
         if (!$article) {
             throw $this->createNotFoundException('Article not found');
         }
 
-        $this->dm->remove($article);
-        $this->dm->flush();
+        $this->articleService->deleteArticle($article);
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
