@@ -30,22 +30,24 @@ class ArticleRepository extends ServiceDocumentRepository
     /**
      * @throws MongoDBException
      */
-    public function findAllOrderedByName(): array|Iterator|int|DeleteResult|UpdateResult|InsertOneResult|null
+    public function findAllOrderedByName(): array
     {
         return $this->createQueryBuilder()
             ->sort('name', 'ASC')
             ->getQuery()
-            ->execute();
+            ->execute()
+            ->toArray();
     }
 
     /**
      * @throws MongoDBException
      */
-    public function findByNameLike(string $name): array|Iterator|int|DeleteResult|UpdateResult|InsertOneResult|null
+    public function findByNameLike(string $name): array
     {
         return $this->createQueryBuilder()
             ->field('name')->equals(new Regex($name, 'i'))
             ->getQuery()
-            ->execute();
+            ->execute()
+            ->toArray();
     }
 }
