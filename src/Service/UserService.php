@@ -7,10 +7,12 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-readonly class UserService
+class UserService implements UserServiceInterface
 {
-    public function __construct(private DocumentManager $dm, private UserPasswordHasherInterface $passwordHasher)
-    {
+    public function __construct(
+        private readonly DocumentManager $dm,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ) {
     }
 
     /**
@@ -29,5 +31,22 @@ readonly class UserService
         $this->dm->flush();
 
         return $user;
+    }
+
+    public function findUserByEmail(string $email): ?User
+    {
+        return $this->dm->getRepository(User::class)->findOneBy(['email' => $email]);
+    }
+
+    /**
+     * @throws \Throwable
+     * @throws MongoDBException
+     */
+    public function updateUserPassword(User $user, string $newPlainPassword): void
+    {
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $newPlainPassword);
+        $user->setPassword($hashedPassword);
+
+        $this->dm->flush();
     }
 }
