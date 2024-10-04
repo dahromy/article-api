@@ -1,0 +1,28 @@
+name: article-api
+recipe: symfony
+config:
+    webroot: public
+    php: '8.2'
+    via: nginx
+
+services:
+    appserver:
+        build_as_root:
+            - curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
+            - apt update && apt install -y symfony-cli libssl-dev
+            - pecl install mongodb
+            - docker-php-ext-enable mongodb
+        build:
+            - |
+                if [ ! -f composer.json ]; then
+                  mkdir tmp && cd tmp
+                  symfony new --version=6.4 --no-git .
+                  mv * ..
+                  mv .env .gitignore ..
+                  cd ..
+                  rm -rf tmp
+                  composer install
+                fi
+
+    database:
+        type: mongo
