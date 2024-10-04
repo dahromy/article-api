@@ -31,10 +31,20 @@ class ArticleController extends AbstractController
      * @throws MongoDBException
      */
     #[Route('', methods: ['GET'])]
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $articles = $this->articleRepository->findAllOrderedByName();
-        return $this->json($articles);
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+
+        $articles = $this->articleRepository->findAllOrderedByName($page, $limit);
+        $total = $this->articleRepository->countAll();
+
+        return $this->json([
+            'data' => $articles,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit
+        ]);
     }
 
     /**

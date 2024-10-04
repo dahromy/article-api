@@ -30,13 +30,26 @@ class ArticleRepository extends ServiceDocumentRepository
     /**
      * @throws MongoDBException
      */
-    public function findAllOrderedByName(): array
+    public function findAllOrderedByName(int $page = 1, int $limit = 10): array
     {
         return $this->createQueryBuilder()
             ->sort('name', 'ASC')
+            ->skip(($page - 1) * $limit)
+            ->limit($limit)
             ->getQuery()
             ->execute()
             ->toArray();
+    }
+
+    /**
+     * @throws MongoDBException
+     */
+    public function countAll(): int
+    {
+        return $this->createQueryBuilder()
+            ->count()
+            ->getQuery()
+            ->execute();
     }
 
     /**
