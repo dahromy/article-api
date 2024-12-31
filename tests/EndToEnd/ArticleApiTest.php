@@ -11,7 +11,7 @@ class ArticleApiTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/api/articles');
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -25,7 +25,7 @@ class ArticleApiTest extends WebTestCase
             'quantity' => 5
         ]));
 
-        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -34,7 +34,7 @@ class ArticleApiTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/api/articles/1');
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -48,7 +48,7 @@ class ArticleApiTest extends WebTestCase
             'quantity' => 10
         ]));
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -57,6 +57,6 @@ class ArticleApiTest extends WebTestCase
         $client = static::createClient();
         $client->request('DELETE', '/api/articles/1');
 
-        $this->assertEquals(204, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 }

@@ -12,6 +12,7 @@ class UserControllerTest extends WebTestCase
 {
     private DocumentManager $documentManager;
     private UserServiceInterface $userService;
+    protected static $container;
 
     protected function setUp(): void
     {

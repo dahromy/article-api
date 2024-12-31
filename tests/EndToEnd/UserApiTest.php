@@ -42,6 +42,7 @@ class UserApiTest extends WebTestCase
         ]));
 
         $responseData = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('id', $responseData);
         $userId = $responseData['id'];
 
         $client->request('POST', '/api/users/' . $userId . '/change-password', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
@@ -60,6 +61,7 @@ class UserApiTest extends WebTestCase
         ]));
 
         $responseData = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('id', $responseData);
         $userId = $responseData['id'];
 
         $client->request('POST', '/api/users/' . $userId . '/change-password', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([

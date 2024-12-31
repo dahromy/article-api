@@ -57,12 +57,16 @@ class UserServiceTest extends KernelTestCase
         $user = new User();
         $user->setEmail($email);
 
+        $repositoryMock = $this->createMock(DocumentManager::class);
+        $repositoryMock->expects($this->once())
+            ->method('findOneBy')
+            ->with(['email' => $email])
+            ->willReturn($user);
+
         $this->documentManager->expects($this->once())
             ->method('getRepository')
             ->with(User::class)
-            ->willReturn($this->createConfiguredMock(DocumentManager::class, [
-                'findOneBy' => $user
-            ]));
+            ->willReturn($repositoryMock);
 
         $result = $this->userService->findUserByEmail($email);
 
