@@ -97,6 +97,33 @@ class ArticleServiceTest extends KernelTestCase
         $this->assertArticleData($result, $data);
     }
 
+    public function testCreateArticleWithInvalidData()
+    {
+        $data = [
+            'name' => '',
+            'description' => 'Test Description',
+            'price' => -10.99,
+            'quantity' => -5
+        ];
+
+        $violations = new ConstraintViolationList([
+            // Add some mock violations here
+        ]);
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn($violations);
+
+        $this->documentManager->expects($this->never())
+            ->method('persist');
+        $this->documentManager->expects($this->never())
+            ->method('flush');
+
+        $result = $this->articleService->createArticle($data);
+
+        $this->assertArrayHasKey('errors', $result);
+    }
+
     public function testGetArticle()
     {
         $articleId = '123';
@@ -112,6 +139,20 @@ class ArticleServiceTest extends KernelTestCase
 
         $this->assertInstanceOf(Article::class, $result);
         $this->assertEquals('Test Article', $result->getName());
+    }
+
+    public function testGetArticleNotFound()
+    {
+        $articleId = '123';
+
+        $this->articleRepository->expects($this->once())
+            ->method('find')
+            ->with($articleId)
+            ->willReturn(null);
+
+        $result = $this->articleService->getArticle($articleId);
+
+        $this->assertNull($result);
     }
 
     public function testUpdateArticle()
@@ -134,6 +175,32 @@ class ArticleServiceTest extends KernelTestCase
         $result = $this->articleService->updateArticle($article, $data);
 
         $this->assertArticleData($result, $data);
+    }
+
+    public function testUpdateArticleWithInvalidData()
+    {
+        $article = new Article();
+        $data = [
+            'name' => '',
+            'description' => 'Updated Description',
+            'price' => -15.99,
+            'quantity' => -10
+        ];
+
+        $violations = new ConstraintViolationList([
+            // Add some mock violations here
+        ]);
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn($violations);
+
+        $this->documentManager->expects($this->never())
+            ->method('flush');
+
+        $result = $this->articleService->updateArticle($article, $data);
+
+        $this->assertArrayHasKey('errors', $result);
     }
 
     public function testDeleteArticle()
