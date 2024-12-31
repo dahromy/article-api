@@ -3,6 +3,7 @@
 namespace App\Tests\EndToEnd;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ArticleApiTest extends WebTestCase
 {
@@ -11,7 +12,7 @@ class ArticleApiTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/api/articles');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -25,7 +26,7 @@ class ArticleApiTest extends WebTestCase
             'quantity' => 5
         ]));
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -34,7 +35,7 @@ class ArticleApiTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/api/articles/1');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -48,7 +49,7 @@ class ArticleApiTest extends WebTestCase
             'quantity' => 10
         ]));
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -57,6 +58,6 @@ class ArticleApiTest extends WebTestCase
         $client = static::createClient();
         $client->request('DELETE', '/api/articles/1');
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode());
     }
 }

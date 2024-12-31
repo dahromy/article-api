@@ -18,6 +18,7 @@ class UserControllerTest extends WebTestCase
     {
         self::bootKernel();
 
+        $this->container = self::$container;
         $this->documentManager = self::$container->get(DocumentManager::class);
         $this->userService = self::$container->get(UserServiceInterface::class);
     }
