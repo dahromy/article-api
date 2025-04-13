@@ -7,6 +7,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[MongoDB\Document(collection: "articles", repositoryClass: ArticleRepository::class)]
+#[MongoDB\Index(keys: ['name' => 'asc'])]
+#[MongoDB\Index(keys: ['price' => 1])]
+#[MongoDB\Index(keys: ['author.id' => 1])]
+#[MongoDB\Index(keys: ['createdAt' => -1])]
 class Article implements \JsonSerializable
 {
     #[MongoDB\Id]
@@ -30,6 +34,24 @@ class Article implements \JsonSerializable
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
     protected ?int $quantity;
+
+    #[MongoDB\Field(type: "collection")]
+    protected array $tags = [];
+
+    #[MongoDB\EmbedOne(targetDocument: User::class)]
+    protected ?User $author = null;
+
+    #[MongoDB\Field(type: "date")]
+    protected ?\DateTime $createdAt;
+
+    #[MongoDB\Field(type: "date")]
+    protected ?\DateTime $updatedAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
 
     // Getters and setters
 
@@ -82,6 +104,50 @@ class Article implements \JsonSerializable
         return $this;
     }
 
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(array $tags): self
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(): self
+    {
+        $this->updatedAt = new \DateTime();
+        return $this;
+    }
+
+    #[MongoDB\PreUpdate]
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTime();
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -90,6 +156,10 @@ class Article implements \JsonSerializable
             'description' => $this->description,
             'price' => $this->price,
             'quantity' => $this->quantity,
+            'tags' => $this->tags,
+            'author' => $this->author,
+            'createdAt' => $this->createdAt?->format('c'),
+            'updatedAt' => $this->updatedAt?->format('c'),
         ];
     }
 }

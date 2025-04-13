@@ -20,17 +20,20 @@ readonly class ArticleService implements ArticleServiceInterface
     /**
      * @throws MongoDBException
      */
-    public function getAllArticles(int $page, int $limit): array
-    {
-        $articles = $this->articleRepository->findAllOrderedByName($page, $limit);
-        $total = $this->articleRepository->countAll();
-
-        return [
-            'data' => $articles,
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit
-        ];
+    public function getAllArticles(
+        int $page = 1, 
+        int $limit = 10, 
+        array $filters = [],
+        string $sortBy = 'createdAt', 
+        string $sortOrder = 'desc'
+    ): array {
+        return $this->articleRepository->findPaginated(
+            $page, 
+            $limit, 
+            $filters, 
+            $sortBy, 
+            $sortOrder
+        );
     }
 
     public function createArticle(array $data): array
