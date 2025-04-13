@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/articles')]
+#[Route('/api/v1/articles')]
 class ArticleController extends AbstractController
 {
     public function __construct(
@@ -30,7 +30,7 @@ class ArticleController extends AbstractController
     }
 
     #[OA\Get(
-        path: '/api/articles',
+        path: '/api/v1/articles',
         summary: 'List all articles',
         parameters: [
             new OA\Parameter(name: 'page', description: 'Page number', in: 'query', schema: new OA\Schema(type: 'integer')),
@@ -114,7 +114,7 @@ class ArticleController extends AbstractController
     }
 
     #[OA\Post(
-        path: '/api/articles',
+        path: '/api/v1/articles',
         summary: 'Create a new article',
         requestBody: new OA\RequestBody(
             required: true,
@@ -167,7 +167,7 @@ class ArticleController extends AbstractController
     }
 
     #[OA\Get(
-        path: '/api/articles/{id}',
+        path: '/api/v1/articles/{id}',
         summary: 'Get an article by ID',
         parameters: [
             new OA\Parameter(
@@ -202,7 +202,7 @@ class ArticleController extends AbstractController
     }
 
     #[OA\Put(
-        path: '/api/articles/{id}',
+        path: '/api/v1/articles/{id}',
         summary: 'Update an existing article',
         requestBody: new OA\RequestBody(
             required: true,
@@ -280,7 +280,7 @@ class ArticleController extends AbstractController
     }
 
     #[OA\Delete(
-        path: '/api/articles/{id}',
+        path: '/api/v1/articles/{id}',
         summary: 'Delete an article',
         parameters: [
             new OA\Parameter(

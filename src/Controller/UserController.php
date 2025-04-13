@@ -18,7 +18,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/users')]
+#[Route('/api/v1/users')]
 class UserController extends AbstractController
 {
     public function __construct(
@@ -29,7 +29,7 @@ class UserController extends AbstractController
     }
 
     #[OA\Post(
-        path: '/api/users',
+        path: '/api/v1/users',
         summary: 'Create a new user',
         requestBody: new OA\RequestBody(
             required: true,
@@ -89,7 +89,7 @@ class UserController extends AbstractController
     }
 
     #[OA\Post(
-        path: '/api/users/{id}/change-password',
+        path: '/api/v1/users/{id}/change-password',
         summary: 'Change user password',
         requestBody: new OA\RequestBody(
             required: true,

@@ -34,8 +34,8 @@ class ApiRateLimitListener
 
         $request = $event->getRequest();
         
-        // Only limit API requests
-        if (!str_starts_with($request->getPathInfo(), '/api')) {
+        // Only limit API requests (specifically v1 and potentially future versions)
+        if (!str_starts_with($request->getPathInfo(), '/api/v')) {
             return;
         }
 

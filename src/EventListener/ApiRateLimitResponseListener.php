@@ -20,8 +20,8 @@ class ApiRateLimitResponseListener
         $request = $event->getRequest();
         $response = $event->getResponse();
         
-        // Only for API routes
-        if (!str_starts_with($request->getPathInfo(), '/api')) {
+        // Only for versioned API routes
+        if (!str_starts_with($request->getPathInfo(), '/api/v')) {
             return;
         }
         

@@ -33,8 +33,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         
-        // Only handle exceptions for API routes
-        if (!str_starts_with($request->getPathInfo(), '/api')) {
+        // Only handle exceptions for versioned API routes
+        if (!str_starts_with($request->getPathInfo(), '/api/v')) {
             return;
         }
         
