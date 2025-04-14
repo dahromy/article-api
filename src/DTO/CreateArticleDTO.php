@@ -25,7 +25,6 @@ class CreateArticleDTO
     #[Assert\NotBlank(message: 'Author ID is required')]
     private string $authorId;
 
-    #[Assert\Optional]
     #[Assert\Type('array')]
     private ?array $tags = null;
 

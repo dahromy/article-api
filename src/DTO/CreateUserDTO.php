@@ -21,7 +21,6 @@ class CreateUserDTO
     )]
     private string $password;
 
-    #[Assert\Optional]
     #[Assert\Type('array')]
     private array $roles = [];
 

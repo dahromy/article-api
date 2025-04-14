@@ -61,7 +61,7 @@ class ArticleController extends AbstractController
         ]
     )]
     #[Route('', methods: ['GET'])]
-    #[Cache(public: true, maxAge: 30)]
+    #[Cache(public: true)]
     public function index(Request $request): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
