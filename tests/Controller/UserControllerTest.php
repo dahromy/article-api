@@ -26,7 +26,10 @@ class UserControllerTest extends WebTestCase
             $this->logicalOr(
                 $this->equalTo(Response::HTTP_CREATED),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -49,7 +52,9 @@ class UserControllerTest extends WebTestCase
             $this->logicalOr(
                 $this->equalTo(Response::HTTP_BAD_REQUEST),
                 $this->equalTo(Response::HTTP_FORBIDDEN),
-                $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -72,7 +77,9 @@ class UserControllerTest extends WebTestCase
             $this->logicalOr(
                 $this->equalTo(Response::HTTP_BAD_REQUEST),
                 $this->equalTo(Response::HTTP_FORBIDDEN),
-                $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -94,7 +101,9 @@ class UserControllerTest extends WebTestCase
             $this->logicalOr(
                 $this->equalTo(Response::HTTP_BAD_REQUEST),
                 $this->equalTo(Response::HTTP_FORBIDDEN),
-                $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -118,7 +127,9 @@ class UserControllerTest extends WebTestCase
                 $this->equalTo(Response::HTTP_OK),
                 $this->equalTo(Response::HTTP_NOT_FOUND),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -141,7 +152,9 @@ class UserControllerTest extends WebTestCase
             $this->logicalOr(
                 $this->equalTo(Response::HTTP_NOT_FOUND),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -165,7 +178,9 @@ class UserControllerTest extends WebTestCase
                 $this->equalTo(Response::HTTP_BAD_REQUEST),
                 $this->equalTo(Response::HTTP_NOT_FOUND),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -190,7 +205,9 @@ class UserControllerTest extends WebTestCase
                 $this->equalTo(Response::HTTP_BAD_REQUEST),
                 $this->equalTo(Response::HTTP_NOT_FOUND),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -213,7 +230,9 @@ class UserControllerTest extends WebTestCase
             $this->logicalOr(
                 $this->equalTo(Response::HTTP_NOT_FOUND),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
@@ -237,7 +256,9 @@ class UserControllerTest extends WebTestCase
                 $this->equalTo(Response::HTTP_BAD_REQUEST),
                 $this->equalTo(Response::HTTP_NOT_FOUND),
                 $this->equalTo(Response::HTTP_INTERNAL_SERVER_ERROR),
-                $this->equalTo(Response::HTTP_FORBIDDEN)
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS),
+                $this->equalTo(Response::HTTP_FORBIDDEN),
+                $this->equalTo(Response::HTTP_TOO_MANY_REQUESTS)
             )
         );
     }
