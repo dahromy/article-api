@@ -100,7 +100,7 @@ class ArticleController extends AbstractController
         $result = $this->articleService->getAllArticles($page, $limit, $filters, $sortBy, $sortOrder);
         
         // Generate ETag based on result data
-        $etag = md5(json_encode($result));
+        $etag = hash('sha256', json_encode($result));
         
         // Check If-None-Match header
         if ($request->headers->has('If-None-Match') && $request->headers->get('If-None-Match') === $etag) {
