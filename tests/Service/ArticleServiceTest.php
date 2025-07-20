@@ -52,26 +52,27 @@ class ArticleServiceTest extends KernelTestCase
     {
         $page = 1;
         $limit = 10;
+        $filters = [];
+        $sortBy = 'createdAt';
+        $sortOrder = 'desc';
         $articles = [new Article(), new Article()];
         $total = 2;
 
-        $this->articleRepository->expects($this->once())
-            ->method('findAllOrderedByName')
-            ->with($page, $limit)
-            ->willReturn($articles);
-
-        $this->articleRepository->expects($this->once())
-            ->method('countAll')
-            ->willReturn($total);
-
-        $result = $this->articleService->getAllArticles($page, $limit);
-
-        $this->assertEquals([
-            'data' => $articles,
+        $expectedResult = [
+            'items' => $articles,
             'total' => $total,
             'page' => $page,
             'limit' => $limit
-        ], $result);
+        ];
+
+        $this->articleRepository->expects($this->once())
+            ->method('findPaginated')
+            ->with($page, $limit, $filters, $sortBy, $sortOrder)
+            ->willReturn($expectedResult);
+
+        $result = $this->articleService->getAllArticles($page, $limit, $filters, $sortBy, $sortOrder);
+
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function testCreateArticle()
@@ -150,5 +151,74 @@ class ArticleServiceTest extends KernelTestCase
 
         // If no exception is thrown, the test passes
         $this->assertTrue(true);
+    }
+
+    public function testCreateArticleWithInvalidData()
+    {
+        $data = [
+            'name' => '', // Invalid: empty name
+            'description' => 'Test Description',
+            'price' => -10.99, // Invalid: negative price
+            'quantity' => -5 // Invalid: negative quantity
+        ];
+
+        $violations = $this->createMock(ConstraintViolationList::class);
+        $violations->method('count')->willReturn(2);
+        $violations->method('__toString')->willReturn('Validation errors occurred');
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn($violations);
+
+        $this->documentManager->expects($this->never())
+            ->method('persist');
+        $this->documentManager->expects($this->never())
+            ->method('flush');
+
+        $result = $this->articleService->createArticle($data);
+
+        $this->assertArrayHasKey('errors', $result);
+        $this->assertEquals('Validation errors occurred', $result['errors']);
+    }
+
+    public function testUpdateArticleWithInvalidData()
+    {
+        $article = new Article();
+        $data = [
+            'name' => '', // Invalid: empty name
+            'description' => 'Updated Description',
+            'price' => -15.99, // Invalid: negative price
+            'quantity' => -10 // Invalid: negative quantity
+        ];
+
+        $violations = $this->createMock(ConstraintViolationList::class);
+        $violations->method('count')->willReturn(2);
+        $violations->method('__toString')->willReturn('Validation errors occurred');
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn($violations);
+
+        $this->documentManager->expects($this->never())
+            ->method('flush');
+
+        $result = $this->articleService->updateArticle($article, $data);
+
+        $this->assertArrayHasKey('errors', $result);
+        $this->assertEquals('Validation errors occurred', $result['errors']);
+    }
+
+    public function testGetArticleNotFound()
+    {
+        $articleId = 'nonexistent-id';
+
+        $this->articleRepository->expects($this->once())
+            ->method('find')
+            ->with($articleId)
+            ->willReturn(null);
+
+        $result = $this->articleService->getArticle($articleId);
+
+        $this->assertNull($result);
     }
 }
