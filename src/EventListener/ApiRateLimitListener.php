@@ -52,7 +52,7 @@ class ApiRateLimitListener
         $limit = $isAuthenticated ? self::AUTHENTICATED_LIMIT : self::ANONYMOUS_LIMIT;
         
         // Get current count for this client
-        $cacheKey = 'rate_limit_' . md5($clientId);
+        $cacheKey = 'rate_limit_' . hash('sha256', $clientId);
         $cacheItem = $this->cache->getItem($cacheKey);
         
         if (!$cacheItem->isHit()) {
