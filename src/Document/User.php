@@ -11,38 +11,60 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[MongoDB\Id]
-    private ?string $id;
+    private ?string $id = null;
 
     #[MongoDB\Field(type: 'string')]
-    private ?string $email;
+    private ?string $email = null;
 
     #[MongoDB\Field(type: 'string')]
-    private string $password;
+    private string $password = '';
 
     #[MongoDB\Field(type: 'collection')]
     private array $roles = [];
 
+    /**
+     * Get the unique identifier of the user.
+     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
+    /**
+     * Get the email address of the user.
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * Set the email address of the user.
+     * 
+     * @param string $email The user's email address
+     * @return self
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
     }
 
+    /**
+     * Get the username (alias for email).
+     * 
+     * @deprecated Use getUserIdentifier() instead
+     */
     public function getUsername(): string
     {
         return (string) $this->email;
     }
 
+    /**
+     * Get the user's roles.
+     * 
+     * @return array<string> Array of role strings
+     */
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -50,32 +72,58 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * Set the user's roles.
+     * 
+     * @param array<string> $roles Array of role strings
+     * @return self
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
         return $this;
     }
 
+    /**
+     * Get the hashed password.
+     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
+    /**
+     * Set the hashed password.
+     * 
+     * @param string $password The hashed password
+     * @return self
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
         return $this;
     }
 
+    /**
+     * Get the salt used to hash the password.
+     * 
+     * @return null Always returns null as modern password hashers don't use separate salt
+     */
     public function getSalt(): ?string
     {
         return null;
     }
 
-    public function eraseCredentials()
+    /**
+     * Erase credentials (clear sensitive data).
+     */
+    public function eraseCredentials(): void
     {
     }
 
+    /**
+     * Get the user identifier (email).
+     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;

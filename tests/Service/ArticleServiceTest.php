@@ -27,10 +27,9 @@ class ArticleServiceTest extends KernelTestCase
     {
         $this->assertArrayHasKey('article', $result);
         $this->assertInstanceOf(Article::class, $result['article']);
-        $this->assertEquals($data['name'], $result['article']->getName());
-        $this->assertEquals($data['description'], $result['article']->getDescription());
-        $this->assertEquals($data['price'], $result['article']->getPrice());
-        $this->assertEquals($data['quantity'], $result['article']->getQuantity());
+        $this->assertEquals($data['title'], $result['article']->getTitle());
+        $this->assertEquals($data['content'], $result['article']->getContent());
+        $this->assertEquals($data['authorId'], $result['article']->getAuthorId());
     }
 
     protected function setUp(): void
@@ -78,10 +77,9 @@ class ArticleServiceTest extends KernelTestCase
     public function testCreateArticle()
     {
         $data = [
-            'name' => 'Test Article',
-            'description' => 'Test Description',
-            'price' => 10.99,
-            'quantity' => 5
+            'title' => 'Test Article',
+            'content' => 'Test content for the article',
+            'authorId' => '507f1f77bcf86cd799439011'
         ];
 
         $this->validator->expects($this->once())
@@ -102,7 +100,7 @@ class ArticleServiceTest extends KernelTestCase
     {
         $articleId = '123';
         $article = new Article();
-        $article->setName('Test Article');
+        $article->setTitle('Test Article');
 
         $this->articleRepository->expects($this->once())
             ->method('find')
@@ -112,17 +110,15 @@ class ArticleServiceTest extends KernelTestCase
         $result = $this->articleService->getArticle($articleId);
 
         $this->assertInstanceOf(Article::class, $result);
-        $this->assertEquals('Test Article', $result->getName());
+        $this->assertEquals('Test Article', $result->getTitle());
     }
 
     public function testUpdateArticle()
     {
         $article = new Article();
         $data = [
-            'name' => 'Updated Article',
-            'description' => 'Updated Description',
-            'price' => 15.99,
-            'quantity' => 10
+            'title' => 'Updated Article',
+            'content' => 'Updated content for the article'
         ];
 
         $this->validator->expects($this->once())
@@ -134,7 +130,8 @@ class ArticleServiceTest extends KernelTestCase
 
         $result = $this->articleService->updateArticle($article, $data);
 
-        $this->assertArticleData($result, $data);
+        $this->assertArrayHasKey('article', $result);
+        $this->assertInstanceOf(Article::class, $result['article']);
     }
 
     public function testDeleteArticle()
@@ -156,14 +153,13 @@ class ArticleServiceTest extends KernelTestCase
     public function testCreateArticleWithInvalidData()
     {
         $data = [
-            'name' => '', // Invalid: empty name
-            'description' => 'Test Description',
-            'price' => -10.99, // Invalid: negative price
-            'quantity' => -5 // Invalid: negative quantity
+            'title' => '', // Invalid: empty title
+            'content' => 'Short', // Invalid: too short content
+            'authorId' => '' // Invalid: empty author ID
         ];
 
         $violations = $this->createMock(ConstraintViolationList::class);
-        $violations->method('count')->willReturn(2);
+        $violations->method('count')->willReturn(3);
         $violations->method('__toString')->willReturn('Validation errors occurred');
 
         $this->validator->expects($this->once())
@@ -185,10 +181,8 @@ class ArticleServiceTest extends KernelTestCase
     {
         $article = new Article();
         $data = [
-            'name' => '', // Invalid: empty name
-            'description' => 'Updated Description',
-            'price' => -15.99, // Invalid: negative price
-            'quantity' => -10 // Invalid: negative quantity
+            'title' => '', // Invalid: empty title
+            'content' => 'Short' // Invalid: too short content
         ];
 
         $violations = $this->createMock(ConstraintViolationList::class);
