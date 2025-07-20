@@ -64,7 +64,7 @@ class ArticleRepository extends ServiceDocumentRepository
         
         // Get total count before pagination
         $totalQb = clone $qb;
-        $total = $totalQb->count()->getQuery()->execute();
+        $total = $totalQb->count();
         
         // Apply sorting and pagination
         $items = $qb
@@ -72,11 +72,16 @@ class ArticleRepository extends ServiceDocumentRepository
             ->skip(($page - 1) * $limit)
             ->limit($limit)
             ->getQuery()
-            ->execute()
-            ->toArray();
+            ->execute();
+            
+        // Convert cursor to array
+        $itemsArray = [];
+        foreach ($items as $item) {
+            $itemsArray[] = $item;
+        }
         
         return [
-            'items' => $items,
+            'items' => $itemsArray,
             'total' => $total,
             'page' => $page,
             'limit' => $limit
@@ -140,13 +145,19 @@ class ArticleRepository extends ServiceDocumentRepository
      */
     public function findAllOrderedByTitle(int $page = 1, int $limit = 10): array
     {
-        return $this->createQueryBuilder()
+        $result = $this->createQueryBuilder()
             ->sort('title', 'ASC')
             ->skip(($page - 1) * $limit)
             ->limit($limit)
             ->getQuery()
-            ->execute()
-            ->toArray();
+            ->execute();
+            
+        $items = [];
+        foreach ($result as $item) {
+            $items[] = $item;
+        }
+        
+        return $items;
     }
 
     /**
@@ -165,10 +176,16 @@ class ArticleRepository extends ServiceDocumentRepository
      */
     public function findByTitleLike(string $title): array
     {
-        return $this->createQueryBuilder()
+        $result = $this->createQueryBuilder()
             ->field('title')->equals(new Regex($title, 'i'))
             ->getQuery()
-            ->execute()
-            ->toArray();
+            ->execute();
+            
+        $items = [];
+        foreach ($result as $item) {
+            $items[] = $item;
+        }
+        
+        return $items;
     }
 }
