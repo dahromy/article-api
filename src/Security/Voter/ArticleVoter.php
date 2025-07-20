@@ -36,6 +36,7 @@ class ArticleVoter extends Voter
         }
         
         // Check if the user is the author of the article
-        return $article->getAuthor()->getId() === $user->getUserIdentifier();
+        $author = $article->getAuthor();
+        return $author !== null && $author->getId() === $user->getUserIdentifier();
     }
 }

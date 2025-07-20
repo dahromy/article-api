@@ -106,7 +106,7 @@ class ApiRateLimitListener
         // Get token if user is authenticated
         $token = $this->tokenStorage->getToken();
         if ($token !== null && $token->getUser() !== null) {
-            return 'user_' . $token->getUserIdentifier();
+            return 'user_' . $token->getUser()->getUserIdentifier();
         }
         
         // Fall back to IP address for anonymous users
