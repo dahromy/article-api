@@ -41,10 +41,12 @@ class UserServiceTest extends KernelTestCase
     {
         $email = 'test@example.com';
         $plainPassword = 'password123';
+        $roles = ['ROLE_ADMIN'];
         $hashedPassword = 'hashed_password_123';
 
         $user = new User();
         $user->setEmail($email);
+        $user->setRoles($roles);
         $user->setPassword($hashedPassword);
 
         $this->passwordHasher->expects($this->once())
@@ -59,11 +61,12 @@ class UserServiceTest extends KernelTestCase
         $this->documentManager->expects($this->once())
             ->method('flush');
 
-        $result = $this->userService->createUser($email, $plainPassword);
+        $result = $this->userService->createUser($email, $plainPassword, $roles);
 
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($email, $result->getEmail());
         $this->assertEquals($hashedPassword, $result->getPassword());
+        $this->assertContains('ROLE_ADMIN', $result->getRoles());
     }
 
     public function testFindUserByEmail()
@@ -117,5 +120,62 @@ class UserServiceTest extends KernelTestCase
         $this->userService->updateUserPassword($user, $newPlainPassword);
 
         $this->assertEquals($newHashedPassword, $user->getPassword());
+    }
+
+    public function testChangePassword()
+    {
+        $user = new User();
+        $user->setEmail('test@example.com');
+        $user->setPassword('old_hashed_password');
+
+        $currentPassword = 'current_password';
+        $newPassword = 'new_password_123';
+        $newHashedPassword = 'new_hashed_password_123';
+
+        // Mock password validation
+        $this->passwordHasher->expects($this->once())
+            ->method('isPasswordValid')
+            ->with($user, $currentPassword)
+            ->willReturn(true);
+
+        // Mock password hashing
+        $this->passwordHasher->expects($this->once())
+            ->method('hashPassword')
+            ->with($user, $newPassword)
+            ->willReturn($newHashedPassword);
+
+        $this->documentManager->expects($this->once())
+            ->method('flush');
+
+        $this->userService->changePassword($user, $currentPassword, $newPassword);
+
+        $this->assertEquals($newHashedPassword, $user->getPassword());
+    }
+
+    public function testChangePasswordWithInvalidCurrentPassword()
+    {
+        $user = new User();
+        $user->setEmail('test@example.com');
+        $user->setPassword('old_hashed_password');
+
+        $currentPassword = 'wrong_password';
+        $newPassword = 'new_password_123';
+
+        // Mock password validation to return false
+        $this->passwordHasher->expects($this->once())
+            ->method('isPasswordValid')
+            ->with($user, $currentPassword)
+            ->willReturn(false);
+
+        // Expect no password hashing or flush to be called
+        $this->passwordHasher->expects($this->never())
+            ->method('hashPassword');
+        $this->documentManager->expects($this->never())
+            ->method('flush');
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Current password is incorrect');
+
+        $this->userService->changePassword($user, $currentPassword, $newPassword);
     }
 }

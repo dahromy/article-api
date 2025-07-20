@@ -39,10 +39,13 @@ readonly class ArticleService implements ArticleServiceInterface
     public function createArticle(array $data): array
     {
         $article = new Article();
-        $article->setName($data['name']);
-        $article->setDescription($data['description']);
-        $article->setPrice($data['price']);
-        $article->setQuantity($data['quantity']);
+        $article->setTitle($data['title']);
+        $article->setContent($data['content']);
+        $article->setAuthorId($data['authorId']);
+        
+        if (isset($data['tags'])) {
+            $article->setTags($data['tags']);
+        }
 
         $errors = $this->validator->validate($article);
         if (count($errors) > 0) {
@@ -62,10 +65,19 @@ readonly class ArticleService implements ArticleServiceInterface
 
     public function updateArticle(Article $article, array $data): array
     {
-        $article->setName($data['name']);
-        $article->setDescription($data['description']);
-        $article->setPrice($data['price']);
-        $article->setQuantity($data['quantity']);
+        if (isset($data['title'])) {
+            $article->setTitle($data['title']);
+        }
+        
+        if (isset($data['content'])) {
+            $article->setContent($data['content']);
+        }
+        
+        if (isset($data['tags'])) {
+            $article->setTags($data['tags']);
+        }
+
+        $article->setUpdatedAt();
 
         $errors = $this->validator->validate($article);
         if (count($errors) > 0) {

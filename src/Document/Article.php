@@ -7,8 +7,8 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[MongoDB\Document(collection: "articles", repositoryClass: ArticleRepository::class)]
-#[MongoDB\Index(keys: ['name' => 'asc'])]
-#[MongoDB\Index(keys: ['price' => 1])]
+#[MongoDB\Index(keys: ['title' => 'asc'])]
+#[MongoDB\Index(keys: ['authorId' => 1])]
 #[MongoDB\Index(keys: ['author.id' => 1])]
 #[MongoDB\Index(keys: ['createdAt' => -1])]
 class Article implements \JsonSerializable
@@ -18,22 +18,17 @@ class Article implements \JsonSerializable
 
     #[MongoDB\Field(type: "string")]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
-    protected ?string $name;
+    #[Assert\Length(min: 3, max: 255)]
+    protected ?string $title;
 
     #[MongoDB\Field(type: "string")]
     #[Assert\NotBlank]
-    protected ?string $description;
+    #[Assert\Length(min: 10)]
+    protected ?string $content;
 
-    #[MongoDB\Field(type: "float")]
+    #[MongoDB\Field(type: "string")]
     #[Assert\NotBlank]
-    #[Assert\PositiveOrZero]
-    protected ?float $price;
-
-    #[MongoDB\Field(type: "int")]
-    #[Assert\NotBlank]
-    #[Assert\PositiveOrZero]
-    protected ?int $quantity;
+    protected ?string $authorId;
 
     #[MongoDB\Field(type: "collection")]
     protected array $tags = [];
@@ -60,47 +55,36 @@ class Article implements \JsonSerializable
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): self
+    public function setTitle(string $title): self
     {
-        $this->name = $name;
+        $this->title = $title;
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getContent(): ?string
     {
-        return $this->description;
+        return $this->content;
     }
 
-    public function setDescription(string $description): self
+    public function setContent(string $content): self
     {
-        $this->description = $description;
+        $this->content = $content;
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getAuthorId(): ?string
     {
-        return $this->price;
+        return $this->authorId;
     }
 
-    public function setPrice(float $price): self
+    public function setAuthorId(string $authorId): self
     {
-        $this->price = $price;
-        return $this;
-    }
-
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
+        $this->authorId = $authorId;
         return $this;
     }
 
@@ -152,10 +136,9 @@ class Article implements \JsonSerializable
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'price' => $this->price,
-            'quantity' => $this->quantity,
+            'title' => $this->title,
+            'content' => $this->content,
+            'authorId' => $this->authorId,
             'tags' => $this->tags,
             'author' => $this->author,
             'createdAt' => $this->createdAt?->format('c'),

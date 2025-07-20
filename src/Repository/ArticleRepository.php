@@ -138,10 +138,10 @@ class ArticleRepository extends ServiceDocumentRepository
     /**
      * @throws MongoDBException
      */
-    public function findAllOrderedByName(int $page = 1, int $limit = 10): array
+    public function findAllOrderedByTitle(int $page = 1, int $limit = 10): array
     {
         return $this->createQueryBuilder()
-            ->sort('name', 'ASC')
+            ->sort('title', 'ASC')
             ->skip(($page - 1) * $limit)
             ->limit($limit)
             ->getQuery()
@@ -163,10 +163,10 @@ class ArticleRepository extends ServiceDocumentRepository
     /**
      * @throws MongoDBException
      */
-    public function findByNameLike(string $name): array
+    public function findByTitleLike(string $title): array
     {
         return $this->createQueryBuilder()
-            ->field('name')->equals(new Regex($name, 'i'))
+            ->field('title')->equals(new Regex($title, 'i'))
             ->getQuery()
             ->execute()
             ->toArray();

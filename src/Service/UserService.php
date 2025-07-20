@@ -19,10 +19,11 @@ readonly class UserService implements UserServiceInterface
      * @throws \Throwable
      * @throws MongoDBException
      */
-    public function createUser(string $email, string $plainPassword): User
+    public function createUser(string $email, string $plainPassword, array $roles = []): User
     {
         $user = new User();
         $user->setEmail($email);
+        $user->setRoles($roles);
 
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($hashedPassword);
@@ -48,5 +49,19 @@ readonly class UserService implements UserServiceInterface
         $user->setPassword($hashedPassword);
 
         $this->dm->flush();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function changePassword(User $user, string $currentPassword, string $newPassword): void
+    {
+        // Verify current password
+        if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
+            throw new \Exception('Current password is incorrect');
+        }
+
+        // Update to new password
+        $this->updateUserPassword($user, $newPassword);
     }
 }
