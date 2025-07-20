@@ -16,6 +16,12 @@ readonly class UserService implements UserServiceInterface
     }
 
     /**
+     * Create a new user with email, password, and optional roles.
+     * 
+     * @param string $email The user's email address
+     * @param string $plainPassword The plain text password
+     * @param array<string> $roles Optional array of user roles
+     * @return User The created user
      * @throws \Throwable
      * @throws MongoDBException
      */
@@ -34,12 +40,22 @@ readonly class UserService implements UserServiceInterface
         return $user;
     }
 
+    /**
+     * Find a user by their email address.
+     * 
+     * @param string $email The email address to search for
+     * @return User|null The user if found, null otherwise
+     */
     public function findUserByEmail(string $email): ?User
     {
         return $this->dm->getRepository(User::class)->findOneBy(['email' => $email]);
     }
 
     /**
+     * Update a user's password with a new plain text password.
+     * 
+     * @param User $user The user whose password to update
+     * @param string $newPlainPassword The new plain text password
      * @throws \Throwable
      * @throws MongoDBException
      */
@@ -52,7 +68,12 @@ readonly class UserService implements UserServiceInterface
     }
 
     /**
-     * @throws \Exception
+     * Change a user's password after verifying the current password.
+     * 
+     * @param User $user The user whose password to change
+     * @param string $currentPassword The current password for verification
+     * @param string $newPassword The new password
+     * @throws \Exception If the current password is incorrect
      */
     public function changePassword(User $user, string $currentPassword, string $newPassword): void
     {
