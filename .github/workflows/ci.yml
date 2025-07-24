@@ -17,9 +17,10 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: '8.2'
+                    extensions: mongodb
 
             -   name: Install dependencies
-                run: composer install --prefer-dist --no-progress
+                run: composer install --prefer-dist --no-progress --ignore-platform-req=ext-mongodb
 
             -   name: Run test suite
                 run: php bin/phpunit

@@ -8,28 +8,44 @@ class CreateUserDTO
 {
     #[Assert\NotBlank(message: 'Email is required')]
     #[Assert\Email(message: 'The email {{ value }} is not a valid email')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Email cannot be longer than {{ limit }} characters'
+    )]
     private string $email = '';
 
     #[Assert\NotBlank(message: 'Password is required')]
     #[Assert\Length(
         min: 8,
+        max: 128,
         minMessage: 'Password must be at least {{ limit }} characters long',
+        maxMessage: 'Password cannot be longer than {{ limit }} characters'
     )]
     #[Assert\Regex(
-        pattern: '/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])/',
-        message: 'Password must include at least one uppercase letter, one lowercase letter, and one number'
+        pattern: '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
+        message: 'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)'
     )]
     private string $password = '';
 
     #[Assert\Type('array')]
-    private array $roles = [];
+    #[Assert\Count(
+        max: 5,
+        maxMessage: 'Cannot assign more than {{ limit }} roles'
+    )]
+    #[Assert\All([
+        new Assert\Choice(
+            choices: ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_EDITOR', 'ROLE_MODERATOR'],
+            message: 'Invalid role "{{ value }}". Allowed roles are: ROLE_USER, ROLE_ADMIN, ROLE_EDITOR, ROLE_MODERATOR'
+        )
+    ])]
+    private array $roles = ['ROLE_USER'];
 
     /**
      * Get the user's email address.
      */
     public function getEmail(): string
     {
-        return $this->email;
+        return strtolower(trim($this->email));
     }
 
     /**
@@ -71,7 +87,12 @@ class CreateUserDTO
      */
     public function getRoles(): array
     {
-        return $this->roles;
+        // Ensure ROLE_USER is always present
+        $roles = array_unique($this->roles);
+        if (!in_array('ROLE_USER', $roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+        return $roles;
     }
 
     /**

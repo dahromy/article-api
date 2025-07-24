@@ -6,6 +6,8 @@
 parameters:
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
+    app.version: '%env(default:app_version_default:API_VERSION)%'
+    app_version_default: '1.0.0'
 
 services:
     # default configuration for services in *this* file
@@ -22,12 +24,41 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Event Listeners Configuration
+    App\EventListener\ExceptionListener:
+        arguments:
+            $environment: '%kernel.environment%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
     App\EventSubscriber\ApiExceptionSubscriber:
         arguments:
             $appEnv: '%kernel.environment%'
 
+    App\EventListener\ApiLoggingListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 1024 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -1024 }
+
+    App\EventListener\ApiRateLimitListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: __invoke, priority: 5 }
+
+    App\EventListener\ApiRateLimitResponseListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: __invoke, priority: 0 }
+
+    App\EventListener\SecurityHeadersListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    App\EventListener\RateLimitListener:
+        arguments:
+            $apiReadLimiter: '@limiter.api_read'
+            $apiWriteLimiter: '@limiter.api_write'
+            $authLimiter: '@limiter.auth'
+
+    # JWT Event Listeners
     App\EventListener\JWTExpiredListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_expired, method: onJWTExpired }

@@ -8,6 +8,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[MongoDB\Document(collection: "users")]
 #[MongoDB\Index(keys: ['email' => 1], options: ["unique" => true])]
+#[MongoDB\Index(keys: ['roles' => 1])]
+#[MongoDB\Index(keys: ['createdAt' => -1])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[MongoDB\Id]
@@ -21,6 +23,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[MongoDB\Field(type: 'collection')]
     private array $roles = [];
+
+    #[MongoDB\Field(type: "date")]
+    private ?\DateTime $createdAt = null;
+
+    #[MongoDB\Field(type: "date")]
+    private ?\DateTime $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
 
     /**
      * Get the unique identifier of the user.

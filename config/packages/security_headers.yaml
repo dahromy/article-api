@@ -1,0 +1,10 @@
+framework:
+    default_locale: en
+    session:
+        # Security headers will be added via event listener
+
+# Security headers configuration
+services:
+    App\EventListener\SecurityHeadersListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }

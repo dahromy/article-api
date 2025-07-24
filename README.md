@@ -23,11 +23,18 @@ This project is a RESTful API for managing articles using Symfony 6.4, PHP 8.2, 
 
 - RESTful API for article management (CRUD operations)
 - User management (create user, change password)
-- User authentication using JWT
+- JWT authentication with configurable TTL
 - MongoDB integration for data storage
+- Comprehensive input validation and sanitization
+- Rate limiting with configurable limits
+- Security headers and CORS protection
+- Comprehensive error handling and logging
+- Health check endpoints for monitoring
+- Caching support (filesystem and Redis)
+- API documentation with OpenAPI/Swagger
 - Symfony 6.4 framework
 - SOLID principles implementation
-- Customizable and extensible
+- Comprehensive test coverage
 
 ## Technologies
 
@@ -69,7 +76,12 @@ This project is a RESTful API for managing articles using Symfony 6.4, PHP 8.2, 
    php bin/console lexik:jwt:generate-keypair
    ```
 
-5. Create a user:
+5. Create database indexes for optimal performance:
+   ```
+   php bin/console doctrine:mongodb:schema:create --index
+   ```
+
+6. Create a user:
    ```
    php bin/console app:create-user email@example.com password
    ```
@@ -93,16 +105,24 @@ This project is a RESTful API for managing articles using Symfony 6.4, PHP 8.2, 
 
 ## API Endpoints
 
+### Health Checks
+- GET `/health` - Comprehensive health check
+- GET `/health/ready` - Readiness check for load balancers
+- GET `/health/live` - Liveness check for container orchestration
+
 ### Articles
-- GET `/api/articles` - List all articles
-- POST `/api/articles` - Create a new article
-- GET `/api/articles/{id}` - Get a specific article
-- PUT `/api/articles/{id}` - Update an article
-- DELETE `/api/articles/{id}` - Delete an article
+- GET `/api/v1/articles` - List all articles (with filtering, pagination, caching)
+- POST `/api/v1/articles` - Create a new article
+- GET `/api/v1/articles/{id}` - Get a specific article
+- PUT `/api/v1/articles/{id}` - Update an article
+- DELETE `/api/v1/articles/{id}` - Delete an article
 
 ### Users
-- POST `/api/users` - Create a new user
-- POST `/api/users/{id}/change-password` - Change user password
+- POST `/api/v1/users` - Create a new user
+- POST `/api/v1/users/{id}/change-password` - Change user password
+
+### Authentication
+- POST `/api/login_check` - Authenticate and get JWT token
 
 ## Authentication
 

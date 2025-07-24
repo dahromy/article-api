@@ -3,7 +3,6 @@
 namespace App\EventListener;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -13,7 +12,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Simple rate limiter for API requests
  */
-#[AsEventListener(event: 'kernel.request', priority: 5)]
 class ApiRateLimitListener
 {
     private const ANONYMOUS_LIMIT = 50;  // 50 requests per 15 minutes for anonymous users

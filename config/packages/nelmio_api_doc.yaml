@@ -3,16 +3,86 @@ nelmio_api_doc:
     documentation:
         info:
             title: Article API
-            description: This is an API for managing articles
+            description: |
+                A comprehensive RESTful API for managing articles with user authentication.
+                
+                ## Features
+                - JWT Authentication
+                - Full CRUD operations for articles
+                - User management
+                - Advanced filtering and search
+                - Rate limiting
+                - Comprehensive error handling
+                
+                ## Authentication
+                To authenticate, obtain a JWT token by sending a POST request to `/api/login_check` with your credentials.
+                Then include the token in the Authorization header: `Authorization: Bearer <your_token>`
+                
+                ## Rate Limits
+                - Read operations: 1000 requests per hour
+                - Write operations: 100 requests per hour  
+                - Authentication: 5 attempts per 15 minutes
+                
             version: 1.0.0
+            contact:
+                name: API Support
+                email: support@example.com
+            license:
+                name: Proprietary
+        servers:
+            - url: http://localhost:8000
+              description: Development server
+            - url: https://api.example.com
+              description: Production server
         components:
             securitySchemes:
                 Bearer:
                     type: http
                     scheme: bearer
                     bearerFormat: JWT
+                    description: JWT token obtained from /api/login_check
+            schemas:
+                Error:
+                    type: object
+                    properties:
+                        error:
+                            type: string
+                            description: Error type
+                        message:
+                            type: string
+                            description: Human-readable error message
+                        violations:
+                            type: object
+                            description: Validation errors (if applicable)
+                    required: [error, message]
+                PaginatedResponse:
+                    type: object
+                    properties:
+                        items:
+                            type: array
+                            description: Array of items
+                        total:
+                            type: integer
+                            description: Total number of items
+                        page:
+                            type: integer
+                            description: Current page number
+                        limit:
+                            type: integer
+                            description: Items per page
+                    required: [items, total, page, limit]
         security:
             -   Bearer: [ ]
+        tags:
+            - name: Articles
+              description: Article management operations
+            - name: Users
+              description: User management operations
+            - name: Authentication
+              description: Authentication endpoints
+            - name: Health
+              description: Health check endpoints
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - ^/health # Include health endpoints

@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use App\Validator\CleanText;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateArticleDTO
@@ -13,19 +14,48 @@ class CreateArticleDTO
         minMessage: 'Title must be at least {{ limit }} characters long',
         maxMessage: 'Title cannot be longer than {{ limit }} characters'
     )]
+    #[CleanText]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9\s\-_.,!?()]+$/u',
+        message: 'Title contains invalid characters'
+    )]
     private string $title = '';
 
     #[Assert\NotBlank(message: 'Content is required')]
     #[Assert\Length(
         min: 10,
+        max: 50000,
         minMessage: 'Content must be at least {{ limit }} characters long',
+        maxMessage: 'Content cannot be longer than {{ limit }} characters'
     )]
+    #[CleanText]
     private string $content = '';
 
     #[Assert\NotBlank(message: 'Author ID is required')]
+    #[Assert\Regex(
+        pattern: '/^[a-f0-9]{24}$/',
+        message: 'Author ID must be a valid MongoDB ObjectId'
+    )]
     private string $authorId = '';
 
     #[Assert\Type('array')]
+    #[Assert\Count(
+        max: 10,
+        maxMessage: 'Cannot have more than {{ limit }} tags'
+    )]
+    #[Assert\All([
+        new Assert\Type('string'),
+        new Assert\Length(
+            min: 2,
+            max: 50,
+            minMessage: 'Tag must be at least {{ limit }} characters long',
+            maxMessage: 'Tag cannot be longer than {{ limit }} characters'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\-_]+$/',
+            message: 'Tags can only contain letters, numbers, hyphens and underscores'
+        )
+    ])]
     private ?array $tags = null;
 
     /**
@@ -33,7 +63,7 @@ class CreateArticleDTO
      */
     public function getTitle(): string
     {
-        return $this->title;
+        return trim($this->title);
     }
 
     /**
@@ -53,7 +83,7 @@ class CreateArticleDTO
      */
     public function getContent(): string
     {
-        return $this->content;
+        return trim($this->content);
     }
 
     /**
@@ -95,7 +125,7 @@ class CreateArticleDTO
      */
     public function getTags(): ?array
     {
-        return $this->tags;
+        return $this->tags ? array_map('trim', $this->tags) : null;
     }
 
     /**

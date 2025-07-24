@@ -11,6 +11,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[MongoDB\Index(keys: ['authorId' => 1])]
 #[MongoDB\Index(keys: ['author.id' => 1])]
 #[MongoDB\Index(keys: ['createdAt' => -1])]
+#[MongoDB\Index(keys: ['updatedAt' => -1])]
+#[MongoDB\Index(keys: ['tags' => 1])]
+#[MongoDB\Index(keys: ['title' => 'text', 'content' => 'text'])]
+#[MongoDB\Index(keys: ['authorId' => 1, 'createdAt' => -1])]
 class Article implements \JsonSerializable
 {
     #[MongoDB\Id]
