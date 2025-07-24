@@ -6,6 +6,8 @@
 parameters:
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
+    app.version: '%env(default:app_version_default:API_VERSION)%'
+    app_version_default: '1.0.0'
 
 services:
     # default configuration for services in *this* file
@@ -22,12 +24,18 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-    App\EventSubscriber\ApiExceptionSubscriber:
+    # Event Listeners Configuration
+    App\EventListener\ExceptionListener:
         arguments:
-            $appEnv: '%kernel.environment%'
+            $environment: '%kernel.environment%'
 
+    App\EventListener\RateLimitListener:
+        arguments:
+            $apiReadLimiter: '@limiter.api_read'
+            $apiWriteLimiter: '@limiter.api_write'
+            $authLimiter: '@limiter.auth'
+
+    # JWT Event Listeners
     App\EventListener\JWTExpiredListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_expired, method: onJWTExpired }
