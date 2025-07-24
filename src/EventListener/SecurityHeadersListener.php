@@ -2,10 +2,8 @@
 
 namespace App\EventListener;
 
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
-#[AsEventListener(event: 'kernel.response')]
 class SecurityHeadersListener
 {
     public function onKernelResponse(ResponseEvent $event): void

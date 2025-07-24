@@ -3,15 +3,12 @@
 namespace App\EventListener;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-#[AsEventListener(event: 'kernel.request', priority: 1024)]
-#[AsEventListener(event: 'kernel.response', priority: -1024)]
 class ApiLoggingListener
 {
     private array $requestData = [];

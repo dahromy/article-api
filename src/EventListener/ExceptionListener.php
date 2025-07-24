@@ -4,7 +4,6 @@ namespace App\EventListener;
 
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-#[AsEventListener(event: 'kernel.exception')]
 class ExceptionListener
 {
     public function __construct(

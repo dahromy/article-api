@@ -2,13 +2,11 @@
 
 namespace App\EventListener;
 
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 /**
  * Adds rate limit headers to API responses
  */
-#[AsEventListener(event: 'kernel.response', priority: 0)]
 class ApiRateLimitResponseListener
 {
     public function __invoke(ResponseEvent $event): void

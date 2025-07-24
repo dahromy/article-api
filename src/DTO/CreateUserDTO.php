@@ -25,7 +25,6 @@ class CreateUserDTO
         pattern: '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
         message: 'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)'
     )]
-    #[Assert\NotCompromisedPassword(message: 'This password is too common and has been compromised')]
     private string $password = '';
 
     #[Assert\Type('array')]
