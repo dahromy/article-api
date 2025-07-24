@@ -48,8 +48,8 @@ class CleanTextValidator extends ConstraintValidator
         $originalLength = strlen($value);
         $strippedLength = strlen($strippedValue);
         
-        // If more than 30% of content is HTML tags, it's suspicious
-        if ($originalLength > 0 && ($originalLength - $strippedLength) / $originalLength > 0.3) {
+        // If more than 50% of content is HTML tags, it's suspicious
+        if ($originalLength > 0 && ($originalLength - $strippedLength) / $originalLength > 0.5) {
             $this->context->buildViolation('Text contains excessive HTML markup.')
                 ->addViolation();
         }
